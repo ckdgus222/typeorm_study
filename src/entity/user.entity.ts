@@ -3,10 +3,17 @@ import {
   CreateDateColumn,
   Entity,
   Generated,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   VersionColumn,
 } from 'typeorm';
+import { ProfileModel } from './profile.entity';
+
+export enum Role {
+  USER = 'user',
+  ADMIN = 'admin',
+}
 
 @Entity()
 export class UserModel {
@@ -25,9 +32,35 @@ export class UserModel {
   @PrimaryGeneratedColumn()
   id: number;
 
-  // 제목
   @Column()
-  title: string;
+  email: string;
+
+  //   // 제목
+  //   @Column({
+  //     // 데이터베이스에서 인지하는 컬럼 타입
+  //     // 특정한 타입을 원할때. 사용
+  //     type: 'varchar',
+  //     // 데이터베이스 칼럼 이름
+  //     name: 'title',
+  //     length: 300,
+  //     // null 이 가능한지
+  //     nullable: true,
+  //     update: false,
+  //     // 기본값이 true
+  //     select: false,
+  //     default: 'default value',
+
+  //     // 칼럼중에서 유일무이한 값이 돼야하는지
+  //     unique: false,
+  //   })
+  //   title: string;
+
+  @Column({
+    type: 'enum',
+    enum: Role,
+    default: Role.USER,
+  })
+  role: Role;
 
   // 데이터 생성 일자
   // 데이터가 생성되는 날짜와 시간이 자동으로 찍힌다.
@@ -50,4 +83,7 @@ export class UserModel {
   @Column()
   @Generated('uuid')
   additionalId: number;
+
+  @OneToOne(() => ProfileModel, (profile) => profile.user)
+  profile: ProfileModel;
 }
